@@ -132,7 +132,7 @@ const PartnersSection = () => {
     <section id="seguradoras-parceiras" className="pt-16 pb-16 bg-[#eaeaea]">
       <div className="container mx-auto px-4">
         <h2 className="text-2xl md:text-3xl font-light mb-12 text-center text-[#cc2c32]">
-          Seguradoras Pareceiras<br></br><span className="text-base md:text-xl font-light text-[#cc2c32]">Consulte aqui os Canais de Atendimento</span>
+          Principais Seguradoras Parceiras<br></br><span className="text-base md:text-xl font-light text-[#cc2c32]">Consulte aqui os Canais de Atendimento</span>
         </h2>
         <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
           {partners.map((partner) => (
