@@ -116,11 +116,11 @@ const InsuranceSection = () => {
         </div>
         <div className="w-full flex justify-center mt-8">
           <Button
-            className="w-full sm:w-auto px-6 py-4 bg-[#ebebeb] text-[#242424] gap-2 transition duration-300 ease-in-out hover:bg-[#808080] hover:text-feijo-red"
+            className="w-full sm:w-auto px-6 py-4 bg-[#cc2c32] text-white gap-2 transition duration-300 ease-in-out hover:bg-[#b02429]"
             onClick={() => setShowModal(true)}
           >
             <img
-              src="/whatsapp.png"
+              src="/whatsapp-white.svg"
               width="20"
               height="20"
               className="mr-2"
