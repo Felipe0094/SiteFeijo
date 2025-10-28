@@ -71,27 +71,13 @@ export const sendEmail = async ({
     type: string;
   }[];
 }) => {
-  try {
-    const { data, error } = await supabase.functions.invoke('send-auto-insurance-quote', {
-      body: {
-        quoteData: JSON.parse(content),
-        policyFile: attachments?.[0]
-      }
-    });
-
-    if (error) {
-      console.error('Supabase function error:', error);
-      throw new Error(error.message);
-    }
-
-    return { success: true, data };
-  } catch (error) {
-    console.error('Error in sendEmail:', error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Failed to send email'
-    };
-  }
+  // Esta função não é mais usada - o envio de email agora é feito diretamente
+  // através do email-service.ts
+  console.warn('sendEmail function is deprecated - use email-service.ts instead');
+  return { 
+    success: false, 
+    error: 'This function is deprecated. Use email-service.ts instead.' 
+  };
 };
 
 export const generateAutoInsuranceEmailContent = (quoteData: any) => {
