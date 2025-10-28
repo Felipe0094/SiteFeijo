@@ -159,7 +159,7 @@ export function GarageInfoSection() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Cobertura para menores de 26 anos?</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} defaultValue={field.value || "nao"}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione uma opção" />
