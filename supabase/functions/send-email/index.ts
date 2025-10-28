@@ -33,7 +33,7 @@ serve(async (req: Request) => {
     const resend = new Resend(resendApiKey);
 
     const { data, error } = await resend.emails.send({
-      from: 'Cotação Site Feijó <noreply@feijowebdesign.com.br>',
+      from: 'Cotação Site Feijó <onboarding@resend.dev>',
       to,
       subject,
       html: content,
