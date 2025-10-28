@@ -64,7 +64,7 @@ export async function POST(request: Request) {
     }
 
     const { data, error } = await resend.emails.send({
-      from: 'Feijo Web Design <noreply@feijowebdesign.com.br>',
+      from: 'Cotação Site Feijó <noreply@feijowebdesign.com.br>',
       to,
       subject,
       html: content,
@@ -89,4 +89,4 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-} 
+}

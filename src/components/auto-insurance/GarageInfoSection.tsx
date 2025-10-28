@@ -24,7 +24,7 @@ export function GarageInfoSection() {
   
   // Update showYoungDriverAge when coversYoungDrivers changes
   useEffect(() => {
-    setShowYoungDriverAge(coversYoungDrivers === true);
+    setShowYoungDriverAge(coversYoungDrivers === "sim");
   }, [coversYoungDrivers]);
   
   // Don't render this component for renewal insurance
@@ -157,16 +157,20 @@ export function GarageInfoSection() {
           control={form.control}
           name="covers_young_drivers"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-              <div className="space-y-0.5">
-                <FormLabel className="text-base">Condutores menores de 26 anos?</FormLabel>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
+            <FormItem>
+              <FormLabel>Cobertura para menores de 26 anos?</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione uma opção" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="sim">Sim</SelectItem>
+                  <SelectItem value="nao">Não. Estou ciente que não haverá cobertura para condutores entre 18 e 25 anos.</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
             </FormItem>
           )}
         />

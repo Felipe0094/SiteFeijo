@@ -8,7 +8,7 @@ const WHATSAPP_ICON = "/whatsapp.png";
 const consultants = [
   { name: "Carlos Henrique", phone: "5522988156269" },
   { name: "Felipe", phone: "5521972110705" },
-  { name: "Gabriel", phone: "5522999210343" },
+  { name: "Gabriel", phone: "5522997501988" },
   { name: "Renan", phone: "5522988521503" },
   { name: "Renata", phone: "5511994150565" },
 ];

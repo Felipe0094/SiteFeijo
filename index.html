@@ -6,6 +6,14 @@
     <title>Feijó Seguros - Sua Corretora de Confiança</title>
     <meta name="description" content="Feijó Seguros - Corretora especializada em seguro auto, vida, residencial, viagem, condomínio e mais." />
     <meta name="author" content="Feijó Seguros" />
+    
+    <!-- Force HTTPS redirect -->
+    <script>
+      if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+        location.replace('https:' + window.location.href.substring(window.location.protocol.length));
+      }
+    </script>
+    
     <base href="/" />
 
     <!-- Preload hero images with highest priority -->
@@ -20,11 +28,17 @@
     <meta property="og:title" content="Feijó Seguros - Sua Corretora de Confiança" />
     <meta property="og:description" content="Feijó Seguros - Corretora especializada em seguro auto, vida, residencial, viagem, condomínio e mais." />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:url" content="https://feijoseguros.com.br" />
+    <meta property="og:image" content="https://feijoseguros.com.br/og-image.svg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Feijó Seguros - Sua Corretora de Confiança" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@feijoseguros" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta name="twitter:title" content="Feijó Seguros - Sua Corretora de Confiança" />
+    <meta name="twitter:description" content="Feijó Seguros - Corretora especializada em seguro auto, vida, residencial, viagem, condomínio e mais." />
+    <meta name="twitter:image" content="https://feijoseguros.com.br/og-image.svg" />
     
     <!-- Favicon: usa LogoSVG.svg com fundo transparente -->
     <link rel="icon" href="/LogoSVG.svg" type="image/svg+xml">

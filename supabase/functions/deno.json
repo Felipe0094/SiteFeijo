@@ -4,10 +4,10 @@
   },
   "compilerOptions": {
     "allowJs": true,
-    "lib": ["deno.window"],
+    "lib": ["deno.window", "deno.ns", "deno.unstable"],
     "strict": true
   },
   "imports": {
     "std/": "https://deno.land/std@0.168.0/"
   }
-} 
+}

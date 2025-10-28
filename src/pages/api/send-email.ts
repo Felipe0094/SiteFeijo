@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log('Sending email to:', to);
 
     const emailData: any = {
-      from: 'Feijó Web Design <noreply@feijowebdesign.com>',
+      from: 'Cotação Site Feijó <noreply@feijowebdesign.com>',
       to: Array.isArray(to) ? to : [to],
       subject,
       html,

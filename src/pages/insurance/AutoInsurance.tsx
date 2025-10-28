@@ -70,7 +70,7 @@ const AutoInsurance = () => {
         phoneNumber = "5521972110705"; // Phone number for Felipe
         break;
       case "Gabriel":
-        phoneNumber = "5522999210343"; // Phone number for Gabriel
+        phoneNumber = "5522997501988"; // Phone number for Gabriel
         break;
       case "Renan":
         phoneNumber = "5522988521503"; // Phone number for Renan

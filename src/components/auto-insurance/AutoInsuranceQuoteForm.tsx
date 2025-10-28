@@ -61,7 +61,7 @@ const formSchema = z.object({
   has_school_garage: z.enum(["not_applicable", "true", "false"]).optional(),
   vehicle_usage: z.enum(["personal", "work", "passenger_transport"]).optional(),
   vehicles_at_residence: z.number().optional(),
-  covers_young_drivers: z.boolean().optional(),
+  covers_young_drivers: z.enum(["sim", "nao"]).optional(),
   condutor_menor: z.string().optional(),
   
   is_driver_insured: z.boolean().optional(),
@@ -119,7 +119,7 @@ const AutoInsuranceQuoteForm = ({
       has_school_garage: "not_applicable",
       vehicle_usage: "personal",
       vehicles_at_residence: 1,
-      covers_young_drivers: false,
+      covers_young_drivers: undefined,
       is_driver_insured: true,
       driver_document_number: undefined,
       driver_full_name: undefined,

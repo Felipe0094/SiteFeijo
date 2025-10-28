@@ -256,7 +256,7 @@ serve(async (req) => {
 
     // Send email using Resend
     const { data: emailData, error: emailError } = await resend.emails.send({
-      from: "Cotações <onboarding@resend.dev>",
+      from: "Cotação Site Feijó <onboarding@resend.dev>",
       to: ["cotacoes.feijocorretora@gmail.com"],
       subject: `Nova Cotação de Seguro Residencial - ${quoteData.full_name} - Vendedor: ${quoteData.seller || "Não informado"}`,
       html: emailContent

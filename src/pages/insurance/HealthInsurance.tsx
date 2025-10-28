@@ -67,7 +67,7 @@ const HealthInsurance = () => {
         phoneNumber = "5511994150565"; // Phone number for Renata
         break;
       case "Gabriel":
-        phoneNumber = "5522999210343"; // Phone number for Gabriel
+        phoneNumber = "5522997501988"; // Phone number for Gabriel
         break;
       default:
         phoneNumber = "5522988521503"; // Default to Renan

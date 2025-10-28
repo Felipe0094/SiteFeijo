@@ -36,7 +36,7 @@ const BusinessInsurance = () => {
         phoneNumber = "5521972110705";
         break;
       case "Gabriel":
-        phoneNumber = "5522999210343";
+        phoneNumber = "5522997501988";
         break;
       case "Renan":
         phoneNumber = "5522988521503";

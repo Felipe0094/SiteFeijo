@@ -63,7 +63,7 @@ const LifeInsurance = () => {
         phoneNumber = "5511994150565";
         break;
       case "Gabriel":
-        phoneNumber = "5522999210343";
+        phoneNumber = "5522997501988";
         break;
       default:
         phoneNumber = "5521972110705";

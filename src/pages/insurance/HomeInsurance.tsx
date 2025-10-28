@@ -66,7 +66,7 @@ const HomeInsurance = () => {
         phoneNumber = "5511994150565";
         break;
       case "Gabriel":
-        phoneNumber = "5522999210343"; // Gabriel's phone number
+        phoneNumber = "5522997501988"; // Gabriel's phone number
         break;
       default:
         phoneNumber = "5521972110705"; // Default number

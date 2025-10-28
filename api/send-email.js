@@ -74,7 +74,7 @@ export default async function handler(req, res) {
     }
 
     const payload = {
-      from: 'Feijó Web Design <onboarding@resend.dev>',
+      from: 'Cotação Site Feijó <onboarding@resend.dev>',
       to: Array.isArray(to) ? to : [to],
       subject,
       html,

@@ -54,7 +54,7 @@ export interface AutoInsuranceFormData {
   driver_license_expiration?: string;
   driver_profession?: string;
   driver_income?: number;
-  covers_young_drivers?: boolean;
+  covers_young_drivers?: "sim" | "nao";
   youngest_driver_age?: number;
   condutor_menor?: string;
 

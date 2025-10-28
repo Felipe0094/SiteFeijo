@@ -180,7 +180,7 @@ serve(async (req)=>{
     const resendApiKey = "re_2hAktQX4_MZFwiUSRBdNzge3oSxXAqnkh";
     const resend = new Resend(resendApiKey);
     const { data: emailData, error: emailError } = await resend.emails.send({
-      from: "Cotações <onboarding@resend.dev>",
+      from: "Cotação Site Feijó <onboarding@resend.dev>",
       to: ["cotacoes.feijocorretora@gmail.com"],
       subject: `Nova Cotação de Seguro Viagem - ${quoteData.full_name} - Vendedor: ${quoteData.seller || "Não informado"}`,
       html: emailContent

@@ -60,7 +60,7 @@ const TravelInsurance = () => {
     const consultantPhones = {
       "Carlos Henrique": "5522988156269",
       "Felipe": "5521972110705",
-      "Gabriel": "5522999210343",
+      "Gabriel": "5522997501988",
       "Renan": "5522988521503",
       "Renata": "5511994150565"
     };
