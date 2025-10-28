@@ -47,6 +47,57 @@ const getRecipients = (seller: string) => {
 const generateEmailContent = (quoteData: any) => {
   const sellerName = quoteData.seller || 'Não informado';
   
+  // Helper functions to format enum values
+  const formatMaritalStatus = (status: string) => {
+    const statusMap: { [key: string]: string } = {
+      'single': 'Solteiro(a)',
+      'married': 'Casado(a)',
+      'divorced': 'Divorciado(a)',
+      'widowed': 'Viúvo(a)',
+      'other': 'Outro'
+    };
+    return statusMap[status] || status || 'Não informado';
+  };
+
+  const formatGender = (gender: string) => {
+    const genderMap: { [key: string]: string } = {
+      'male': 'Masculino',
+      'female': 'Feminino',
+      'other': 'Outro'
+    };
+    return genderMap[gender] || gender || 'Não informado';
+  };
+
+  const formatFuelType = (fuel: string) => {
+    const fuelMap: { [key: string]: string } = {
+      'gasoline': 'Gasolina',
+      'ethanol': 'Etanol',
+      'flex': 'Flex',
+      'diesel': 'Diesel',
+      'electric': 'Elétrico',
+      'hybrid': 'Híbrido'
+    };
+    return fuelMap[fuel] || fuel || 'Não informado';
+  };
+
+  const formatVehicleUsage = (usage: string) => {
+    const usageMap: { [key: string]: string } = {
+      'personal': 'Pessoal',
+      'work': 'Trabalho',
+      'passenger_transport': 'Transporte de passageiros'
+    };
+    return usageMap[usage] || usage || 'Não informado';
+  };
+
+  const formatResidenceType = (type: string) => {
+    const typeMap: { [key: string]: string } = {
+      'house': 'Casa',
+      'apartment': 'Apartamento',
+      'condominium': 'Condomínio'
+    };
+    return typeMap[type] || type || 'Não informado';
+  };
+  
   return `
     <!DOCTYPE html>
     <html>
@@ -143,11 +194,15 @@ const generateEmailContent = (quoteData: any) => {
           </div>
           <div class="info-row">
             <div class="info-label">Estado Civil:</div>
-            <div class="info-value">${quoteData.marital_status || 'Não informado'}</div>
+            <div class="info-value">${formatMaritalStatus(quoteData.marital_status)}</div>
           </div>
           <div class="info-row">
             <div class="info-label">Gênero:</div>
-            <div class="info-value">${quoteData.gender || 'Não informado'}</div>
+            <div class="info-value">${formatGender(quoteData.gender)}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Tipo de Residência:</div>
+            <div class="info-value">${formatResidenceType(quoteData.residence_type)}</div>
           </div>
         </div>
 
@@ -215,7 +270,7 @@ const generateEmailContent = (quoteData: any) => {
           </div>
           <div class="info-row">
             <div class="info-label">Combustível:</div>
-            <div class="info-value">${quoteData.fuel_type || 'Não informado'}</div>
+            <div class="info-value">${formatFuelType(quoteData.fuel_type)}</div>
           </div>
           <div class="info-row">
             <div class="info-label">Financiado:</div>
@@ -255,7 +310,7 @@ const generateEmailContent = (quoteData: any) => {
           </div>
           <div class="info-row">
             <div class="info-label">Uso do Veículo:</div>
-            <div class="info-value">${quoteData.vehicle_usage === 'personal' ? 'Pessoal' : quoteData.vehicle_usage === 'work' ? 'Trabalho' : 'Transporte de Passageiros'}</div>
+            <div class="info-value">${formatVehicleUsage(quoteData.vehicle_usage)}</div>
           </div>
           <div class="info-row">
             <div class="info-label">Veículos na Residência:</div>
@@ -284,26 +339,26 @@ const generateEmailContent = (quoteData: any) => {
           </div>
           <div class="info-row">
             <div class="info-label">Estado Civil:</div>
-            <div class="info-value">${quoteData.driver_marital_status || 'Não informado'}</div>
+            <div class="info-value">${formatMaritalStatus(quoteData.driver_marital_status)}</div>
           </div>
           <div class="info-row">
             <div class="info-label">Gênero:</div>
-            <div class="info-value">${quoteData.driver_gender || 'Não informado'}</div>
+            <div class="info-value">${formatGender(quoteData.driver_gender)}</div>
           </div>
           <div class="info-row">
             <div class="info-label">Parentesco:</div>
             <div class="info-value">${quoteData.driver_relationship || 'Não informado'}</div>
           </div>
           <div class="info-row">
-            <div class="info-label">CNH:</div>
+            <div class="info-label">Número da CNH:</div>
             <div class="info-value">${quoteData.driver_license_number || 'Não informado'}</div>
           </div>
           <div class="info-row">
-            <div class="info-label">Categoria CNH:</div>
+            <div class="info-label">Categoria da CNH:</div>
             <div class="info-value">${quoteData.driver_license_category || 'Não informado'}</div>
           </div>
           <div class="info-row">
-            <div class="info-label">Vencimento CNH:</div>
+            <div class="info-label">Vencimento da CNH:</div>
             <div class="info-value">${quoteData.driver_license_expiration || 'Não informado'}</div>
           </div>
           <div class="info-row">
