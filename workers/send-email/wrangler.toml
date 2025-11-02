@@ -1,0 +1,8 @@
+name = "send-email-worker"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+
+# Opcional: defina uma rota se quiser usar seu domínio
+# routes = [
+#   { pattern = "send-email.feijoseguros.com.br/*", zone_name = "feijoseguros.com.br" }
+# ]
