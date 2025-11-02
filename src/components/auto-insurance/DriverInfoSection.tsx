@@ -70,7 +70,7 @@ export const DriverInfoSection = ({ showDriverInfo, setShowDriverInfo }: DriverI
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Grau de Parentesco com o Segurado</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value ?? ''}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione..." />
@@ -97,7 +97,7 @@ export const DriverInfoSection = ({ showDriverInfo, setShowDriverInfo }: DriverI
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Estado Civil</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value ?? ''}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione..." />
@@ -122,7 +122,7 @@ export const DriverInfoSection = ({ showDriverInfo, setShowDriverInfo }: DriverI
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Gênero</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value ?? ''}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione..." />

@@ -12,7 +12,7 @@ export interface EmailData {
 export const sendEmail = async (emailData: EmailData) => {
   try {
     // Envio via endpoint de formulário (compatível com sites estáticos em GitHub Pages)
-    const formsEndpoint = import.meta.env.VITE_FORMS_ENDPOINT_URL;
+    const formsEndpoint = import.meta.env.VITE_FORMS_ENDPOINT_URL || 'https://send-email-worker.felipepmerj.workers.dev';
     if (!formsEndpoint) {
       throw new Error('URL do endpoint de formulário não configurada: defina VITE_FORMS_ENDPOINT_URL');
     }

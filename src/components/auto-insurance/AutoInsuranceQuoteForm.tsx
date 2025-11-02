@@ -528,7 +528,7 @@ const AutoInsuranceQuoteForm = ({
                     <FormLabel>Consultor*</FormLabel>
                     <Select 
                       onValueChange={field.onChange}
-                      value={field.value}
+                      value={field.value ?? ''}
                     >
                       <FormControl>
                         <SelectTrigger>
