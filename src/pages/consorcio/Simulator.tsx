@@ -7,7 +7,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Car, Info, Wallet, Calendar, Trophy, Clock, Percent, User, Building, TrendingDown, ArrowRight } from 'lucide-react';
+import { Car, Info, Wallet, Calendar, Trophy, Clock, Percent, User, Building, TrendingDown, ArrowRight, MessageSquareMore } from 'lucide-react';
 
 const CONSORTIUM_RATES = {
   taxaAdministrativa: 0.16,
@@ -170,6 +170,14 @@ const ConsortiumSimulator = () => {
   };
 
   const [input, setInput] = useState<SimulationInput>(DEFAULTS);
+  const [showConsultantModal, setShowConsultantModal] = useState(false);
+  const consultants = [
+    { name: 'Carlos Henrique', phone: '5522988156269' },
+    { name: 'Felipe', phone: '5521972110705' },
+    { name: 'Gabriel', phone: '5522997501988' },
+    { name: 'Renan', phone: '5522988521503' },
+    { name: 'Renata', phone: '5511994150565' },
+  ];
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
@@ -318,16 +326,14 @@ const ConsortiumSimulator = () => {
 
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <Label className="text-sm text-feijo-gray flex items-center gap-2"><Clock className="w-4 h-4" />Mês de Contemplação</Label>
+                      <Label className="text-sm text-feijo-gray flex items-center gap-2"><Clock className="w-4 h-4" />Previsão do Mês de Contemplação (para cáculos das parcelas restante)</Label>
                       <span className="text-sm font-medium text-feijo-red">{input.mesContemplacao}º mês</span>
                     </div>
                     <Slider value={[input.mesContemplacao]} onValueChange={([v]) => updateField('mesContemplacao', v)} min={1} max={Math.min(input.prazoInicial - 1, 60)} step={1} />
                     <div className="flex justify-between text-xs text-feijo-gray"><span>1º mês</span><span>{Math.min(input.prazoInicial - 1, 60)}º mês</span></div>
                   </div>
 
-                  <div className="mt-4">
-                    <Button className="bg-[#cc2c32] text-white hover:bg-[#b02429]" onClick={() => setInput(DEFAULTS)}>Recalcular com novos valores</Button>
-                  </div>
+                  
                 </div>
 
                 <div className="p-6 border rounded-xl">
@@ -376,6 +382,50 @@ const ConsortiumSimulator = () => {
             <div className="mt-12 p-4 rounded-xl bg-gray-50 border">
               <div className="flex gap-3"><Info className="w-5 h-5 text-feijo-gray" /><p className="text-sm text-feijo-gray"><strong className="text-feijo-darkgray">Aviso:</strong> Os valores da simulação são referência e podem variar conforme disponibilidade de vagas no grupo.</p></div>
             </div>
+
+            <div className="w-full flex justify-center mt-8">
+              <Button
+                className="w-full sm:w-auto px-6 py-4 bg-[#cc2c32] text-white gap-2 transition duration-300 ease-in-out hover:bg-[#b02429]"
+                onClick={() => setShowConsultantModal(true)}
+              >
+                <img
+                  src="/whatsapp-white.svg"
+                  width="20"
+                  height="20"
+                  className="mr-2"
+                  alt="WhatsApp"
+                />
+                Fale com um especialista
+              </Button>
+            </div>
+
+            {showConsultantModal && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-xs">
+                  <h3 className="text-lg font-semibold mb-4 text-center text-feijo-darkgray">Selecione o seu Consultor / Corretor:</h3>
+                  <div className="flex flex-col gap-2">
+                    {consultants.map((c) => (
+                      <a
+                        key={c.phone}
+                        href={`https://wa.me/${c.phone}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full px-4 py-2 bg-[#dadadb] text-feijo-red rounded hover:bg-gray-400 text-center transition-colors duration-200 flex items-center justify-center gap-2"
+                      >
+                        <MessageSquareMore size={16} />
+                        {c.name}
+                      </a>
+                    ))}
+                  </div>
+                  <button
+                    className="mt-4 w-full px-4 py-2 bg-feijo-red text-white rounded hover:bg-gray-400 transition-colors duration-200"
+                    onClick={() => setShowConsultantModal(false)}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </main>
         <Footer />
