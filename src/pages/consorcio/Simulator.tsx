@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Label } from '@/components/ui/label';
@@ -6,6 +6,7 @@ import { Slider } from '@/components/ui/slider';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 import { Car, Info, Wallet, Calendar, Trophy, Clock, Percent, User, Building, TrendingDown, ArrowRight } from 'lucide-react';
 
 const CONSORTIUM_RATES = {
@@ -25,6 +26,7 @@ interface SimulationInput {
   mesContemplacao: number;
   redutorGrupo: number;
   tipoPessoa: PersonType;
+  campanhaParcelaOriginal: boolean;
 }
 
 interface ParcelaBreakdown {
@@ -38,12 +40,19 @@ interface ParcelaBreakdown {
 
 interface PostContemplationResult {
   saldoDevedor: number;
-  novaParcelaReducao: number;
   prazoMantido: number;
   parcelaMantida: number;
   novoPrazo: number;
   creditoLiberado: number;
   representatividadeLance: number;
+  saldoNormal: number;
+  saldoReduzido: number;
+  novoSeguroPF: number;
+  parcelaTeoricaPJ: number;
+  parcelaTeoricaPF: number;
+  prazoSomenteNormal: number;
+  prazoSomenteReduzida: number;
+  novaParcelaReducao: number;
 }
 
 interface SimulationResult {
@@ -71,14 +80,32 @@ function calculateParcelas(
   creditoContratado: number,
   prazoInicial: number,
   tipoPessoa: PersonType,
-  redutorGrupo: number
+  redutorGrupo: number,
+  campanhaParcelaOriginal: boolean
 ): ParcelaBreakdown {
   const cotaCredito = creditoContratado / prazoInicial;
   const taxaAdministrativa = (creditoContratado * CONSORTIUM_RATES.taxaAdministrativa) / prazoInicial;
   const fundoReserva = (creditoContratado * CONSORTIUM_RATES.fundoReserva) / prazoInicial;
-  const seguro = tipoPessoa === 'PF' ? creditoContratado * CONSORTIUM_RATES.seguroVidaPF : 0;
-  const parcelaBruta = cotaCredito + taxaAdministrativa + fundoReserva + seguro;
-  const parcelaReduzida = parcelaBruta * (1 - redutorGrupo);
+  const categoria = creditoContratado * (1 + CONSORTIUM_RATES.taxaAdministrativa + CONSORTIUM_RATES.fundoReserva);
+  const categoriaMensal = categoria / prazoInicial;
+  const seguro = tipoPessoa === 'PF' ? categoria * CONSORTIUM_RATES.seguroVidaPF : 0;
+
+  let parcelaBruta = 0;
+  let parcelaReduzida = 0;
+
+  if (campanhaParcelaOriginal) {
+    const baseCampanha = categoria / 200;
+    parcelaBruta = tipoPessoa === 'PF' ? baseCampanha + seguro : baseCampanha;
+    parcelaReduzida = parcelaBruta;
+  } else {
+    if (tipoPessoa === 'PF') {
+      parcelaBruta = categoriaMensal + seguro;
+      parcelaReduzida = categoriaMensal * (1 - redutorGrupo) + seguro;
+    } else {
+      parcelaBruta = categoriaMensal;
+      parcelaReduzida = categoriaMensal * (1 - redutorGrupo);
+    }
+  }
   return { cotaCredito, taxaAdministrativa, fundoReserva, seguro, parcelaBruta, parcelaReduzida };
 }
 
@@ -93,16 +120,41 @@ function calculatePostContemplation(
   const categoria = creditoContratado * (1 + CONSORTIUM_RATES.taxaAdministrativa + CONSORTIUM_RATES.fundoReserva);
   const parcelasPagas = mesContemplacao;
   const parcelasRestantes = prazoInicial - parcelasPagas;
-  const saldoDevedorParcelaReduzida = parcelas.parcelaReduzida * parcelasRestantes;
+  const categoriaMensal = categoria / prazoInicial;
+  const saldoDevedorParcelaBruta = parcelas.parcelaBruta * parcelasRestantes;
   const ofertaTotal = lanceProprio + lanceEmbutido;
-  const saldoAposLance = Math.max(0, saldoDevedorParcelaReduzida - ofertaTotal);
+  const saldoAposLance = Math.max(0, saldoDevedorParcelaBruta - ofertaTotal);
   const representatividadeLance = (ofertaTotal / categoria) * 100;
   const creditoLiberado = Math.max(0, creditoContratado - lanceEmbutido);
-  const novaParcelaReducao = parcelasRestantes > 0 ? saldoAposLance / parcelasRestantes : 0;
-  const prazoMantido = prazoInicial;
-  const parcelaMantida = parcelas.parcelaReduzida;
-  const novoPrazo = parcelaMantida > 0 ? Math.ceil(saldoAposLance / parcelaMantida) + parcelasPagas : parcelasPagas;
-  return { saldoDevedor: saldoAposLance, novaParcelaReducao, prazoMantido, parcelaMantida, novoPrazo, creditoLiberado, representatividadeLance };
+  const prazoMantido = parcelasRestantes;
+  const parcelaMantida = parcelas.parcelaBruta;
+  const novoPrazo = parcelaMantida > 0 ? Math.ceil(saldoAposLance / parcelaMantida) : parcelasRestantes;
+
+  const reducaoMensalCategoria = parcelas.parcelaBruta - parcelas.parcelaReduzida;
+  const saldoNormal = Math.max(0, categoriaMensal * parcelasRestantes - ofertaTotal);
+  const saldoReduzido = Math.max(0, saldoNormal + reducaoMensalCategoria * parcelasPagas);
+  const parcelaTeoricaPJ = parcelasRestantes > 0 ? saldoReduzido / parcelasRestantes : 0;
+  const novoSeguroPF = parcelas.seguro > 0 ? creditoLiberado * CONSORTIUM_RATES.seguroVidaPF : 0;
+  const parcelaTeoricaPF = parcelas.seguro > 0 ? parcelaTeoricaPJ + novoSeguroPF : parcelaTeoricaPJ;
+  const prazoSomenteNormal = parcelaMantida > 0 ? Math.ceil(saldoNormal / parcelaMantida) : 0;
+  const prazoSomenteReduzida = parcelaMantida > 0 ? Math.ceil(saldoReduzido / parcelaMantida) : 0;
+  const novaParcelaReducao = parcelas.seguro > 0 ? parcelaTeoricaPF : parcelaTeoricaPJ;
+  return {
+    saldoDevedor: saldoAposLance,
+    prazoMantido,
+    parcelaMantida,
+    novoPrazo,
+    creditoLiberado,
+    representatividadeLance,
+    saldoNormal,
+    saldoReduzido,
+    novoSeguroPF,
+    parcelaTeoricaPJ,
+    parcelaTeoricaPF,
+    prazoSomenteNormal,
+    prazoSomenteReduzida,
+    novaParcelaReducao,
+  };
 }
 
 const ConsortiumSimulator = () => {
@@ -114,11 +166,15 @@ const ConsortiumSimulator = () => {
     mesContemplacao: 10,
     redutorGrupo: 0.4,
     tipoPessoa: 'PF',
+    campanhaParcelaOriginal: false,
   };
 
   const [input, setInput] = useState<SimulationInput>(DEFAULTS);
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
   const result: SimulationResult = useMemo(() => {
-    const parcelas = calculateParcelas(input.creditoContratado, input.prazoInicial, input.tipoPessoa, input.redutorGrupo);
+    const parcelas = calculateParcelas(input.creditoContratado, input.prazoInicial, input.tipoPessoa, input.redutorGrupo, input.campanhaParcelaOriginal);
     const posContemplacao = calculatePostContemplation(input.creditoContratado, input.prazoInicial, input.lanceProprio, input.lanceEmbutido, input.mesContemplacao, parcelas);
     const categoria = input.creditoContratado * (1 + CONSORTIUM_RATES.taxaAdministrativa + CONSORTIUM_RATES.fundoReserva);
     return { parcelas, posContemplacao, categoria };
@@ -191,11 +247,19 @@ const ConsortiumSimulator = () => {
 
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <Label className="text-sm text-feijo-gray flex items-center gap-2"><Percent className="w-4 h-4" />Redutor do Grupo</Label>
+                      <Label className="text-sm text-feijo-gray flex items-center gap-2"><Percent className="w-4 h-4" />Campanha de redução de Parcelas</Label>
                       <span className="text-sm font-medium text-feijo-red">{(input.redutorGrupo * 100).toFixed(0)}%</span>
                     </div>
                     <Slider value={[input.redutorGrupo * 100]} onValueChange={([v]) => updateField('redutorGrupo', v / 100)} min={0} max={50} step={5} />
                     <div className="flex justify-between text-xs text-feijo-gray"><span>0%</span><span>50%</span></div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm text-feijo-gray flex items-center gap-2"><Percent className="w-4 h-4" />Campanha Parcela Original</Label>
+                      <Switch checked={input.campanhaParcelaOriginal} onCheckedChange={(v) => updateField('campanhaParcelaOriginal', v)} />
+                    </div>
+                    <div className="text-xs text-feijo-gray">Quando ativo, parcela calculada por campanha (categoria ÷ 200). Para PF, soma seguro.</div>
                   </div>
 
                   <div className="border-t pt-6">
@@ -242,7 +306,7 @@ const ConsortiumSimulator = () => {
                         <span className="font-medium">{formatCurrency(input.lanceProprio + input.lanceEmbutido)}</span>
                       </div>
                       <div className="p-3 bg-gray-50 rounded-lg flex items-center justify-between">
-                        <span className="text-sm text-feijo-gray">Representatividade</span>
+                        <span className="text-sm text-feijo-gray">Representatividade do Lance</span>
                         <span className="font-medium">{((input.lanceProprio + input.lanceEmbutido) / (input.creditoContratado * (1 + CONSORTIUM_RATES.taxaAdministrativa + CONSORTIUM_RATES.fundoReserva)) * 100).toFixed(2)}%</span>
                       </div>
                       <div className="p-3 bg-gray-50 rounded-lg flex items-center justify-between">
@@ -280,8 +344,8 @@ const ConsortiumSimulator = () => {
                 <div className="p-6 border rounded-xl">
                   <div className="flex items-center gap-2 pb-4 border-b mb-6"><TrendingDown className="w-4 h-4 text-feijo-red" /><h2 className="text-lg font-semibold text-feijo-darkgray">Resultado da Simulação</h2></div>
                   <div className="grid sm:grid-cols-2 gap-4 mb-6">
-                    <Card className="bg-gray-50 border"><CardHeader className="pb-2"><CardTitle className="text-sm text-feijo-gray">Categoria</CardTitle></CardHeader><CardContent><span className="text-2xl font-bold">{formatCurrency(result.categoria)}</span></CardContent></Card>
-                    <Card className="bg-gray-50 border"><CardHeader className="pb-2"><CardTitle className="text-sm text-feijo-gray">Valor Seguro</CardTitle></CardHeader><CardContent><span className="text-2xl font-bold">{formatCurrency(result.parcelas.seguro)}</span></CardContent></Card>
+                    <Card className="bg-gray-50 border"><CardHeader className="pb-2"><CardTitle className="text-sm text-feijo-gray">Saldo Devedor</CardTitle></CardHeader><CardContent><span className="text-2xl font-bold">{formatCurrency(result.categoria)}</span></CardContent></Card>
+                    <Card className="bg-gray-50 border"><CardHeader className="pb-2"><CardTitle className="text-sm text-feijo-gray">Carta de Crédito</CardTitle></CardHeader><CardContent><span className="text-2xl font-bold text-green-600">{formatCurrency(result.posContemplacao.creditoLiberado)}</span></CardContent></Card>
                   </div>
                   <div className="grid sm:grid-cols-2 gap-4 mb-6">
                     <Card className="border-primary/20"><CardHeader className="pb-2"><CardTitle className="text-sm text-feijo-gray">Parcela {input.tipoPessoa}</CardTitle></CardHeader><CardContent><span className="text-3xl font-bold text-feijo-red">{formatCurrency(result.parcelas.parcelaBruta)}</span></CardContent></Card>
@@ -300,7 +364,7 @@ const ConsortiumSimulator = () => {
                     <div className="flex items-center gap-2 mb-4"><Trophy className="w-5 h-5 text-feijo-red" /><h3 className="text-base font-semibold">Estimativa Pós-Contemplação</h3></div>
                     <div className="grid sm:grid-cols-2 gap-4 mb-4">
                       <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><span className="text-sm text-feijo-gray">Crédito Liberado</span><span className="font-medium">{formatCurrency(result.posContemplacao.creditoLiberado)}</span></div>
-                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><span className="text-sm text-feijo-gray">Representatividade</span><span className="font-medium">{formatPercent(result.posContemplacao.representatividadeLance)}</span></div>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><span className="text-sm text-feijo-gray">Pago / Quitado</span><span className="font-medium">{formatPercent(result.posContemplacao.representatividadeLance)}</span></div>
                     </div>
                     <Card className="mb-4"><CardHeader className="pb-2"><CardTitle className="text-sm font-medium flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-gray-200 text-feijo-red text-xs flex items-center justify-center font-bold">A</span>Reduzir Valor da Parcela</CardTitle></CardHeader><CardContent><div className="flex items-center gap-4"><div><span className="text-sm text-feijo-gray">Nova Parcela</span><p className="text-2xl font-bold text-feijo-red">{formatCurrency(result.posContemplacao.novaParcelaReducao)}</p></div><ArrowRight className="w-5 h-5 text-feijo-gray" /><div><span className="text-sm text-feijo-gray">Com Prazo de</span><p className="text-2xl font-bold">{result.posContemplacao.prazoMantido} meses</p></div></div></CardContent></Card>
                     <Card><CardHeader className="pb-2"><CardTitle className="text-sm font-medium flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-gray-200 text-feijo-red text-xs flex items-center justify-center font-bold">B</span>Reduzir Prazo</CardTitle></CardHeader><CardContent><div className="flex items-center gap-4"><div><span className="text-sm text-feijo-gray">Com Parcelas de</span><p className="text-2xl font-bold">{formatCurrency(result.posContemplacao.parcelaMantida)}</p></div><ArrowRight className="w-5 h-5 text-feijo-gray" /><div><span className="text-sm text-feijo-gray">Novo Prazo</span><p className="text-2xl font-bold">{result.posContemplacao.novoPrazo} meses</p></div></div></CardContent></Card>

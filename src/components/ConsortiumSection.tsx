@@ -28,7 +28,7 @@ const ConsortiumSection = () => {
           <div className="mt-8 mb-12 text-center">
             <Link to="/consorcio/simulador">
               <button className="bg-[#cc2c32] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#b02429] transition-colors">
-                SIMULE SEU CONSÓRCIO DE CARRO AGORA
+                Simule agora o seu Consórcio de Automóveis
               </button>
             </Link>
           </div>
