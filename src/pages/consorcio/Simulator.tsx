@@ -6,7 +6,6 @@ import { Slider } from '@/components/ui/slider';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
 import { Car, Info, Wallet, Calendar, Trophy, Clock, Percent, User, Building, TrendingDown, ArrowRight, MessageSquareMore } from 'lucide-react';
 
 const CONSORTIUM_RATES = {
@@ -26,7 +25,6 @@ interface SimulationInput {
   mesContemplacao: number;
   redutorGrupo: number;
   tipoPessoa: PersonType;
-  campanhaParcelaOriginal: boolean;
 }
 
 interface ParcelaBreakdown {
@@ -80,8 +78,7 @@ function calculateParcelas(
   creditoContratado: number,
   prazoInicial: number,
   tipoPessoa: PersonType,
-  redutorGrupo: number,
-  campanhaParcelaOriginal: boolean
+  redutorGrupo: number
 ): ParcelaBreakdown {
   const cotaCredito = creditoContratado / prazoInicial;
   const taxaAdministrativa = (creditoContratado * CONSORTIUM_RATES.taxaAdministrativa) / prazoInicial;
@@ -92,19 +89,12 @@ function calculateParcelas(
 
   let parcelaBruta = 0;
   let parcelaReduzida = 0;
-
-  if (campanhaParcelaOriginal) {
-    const baseCampanha = categoria / 200;
-    parcelaBruta = tipoPessoa === 'PF' ? baseCampanha + seguro : baseCampanha;
-    parcelaReduzida = parcelaBruta;
+  if (tipoPessoa === 'PF') {
+    parcelaBruta = categoriaMensal + seguro;
+    parcelaReduzida = categoriaMensal * (1 - redutorGrupo) + seguro;
   } else {
-    if (tipoPessoa === 'PF') {
-      parcelaBruta = categoriaMensal + seguro;
-      parcelaReduzida = categoriaMensal * (1 - redutorGrupo) + seguro;
-    } else {
-      parcelaBruta = categoriaMensal;
-      parcelaReduzida = categoriaMensal * (1 - redutorGrupo);
-    }
+    parcelaBruta = categoriaMensal;
+    parcelaReduzida = categoriaMensal * (1 - redutorGrupo);
   }
   return { cotaCredito, taxaAdministrativa, fundoReserva, seguro, parcelaBruta, parcelaReduzida };
 }
@@ -166,7 +156,6 @@ const ConsortiumSimulator = () => {
     mesContemplacao: 10,
     redutorGrupo: 0.4,
     tipoPessoa: 'PF',
-    campanhaParcelaOriginal: false,
   };
 
   const [input, setInput] = useState<SimulationInput>(DEFAULTS);
@@ -182,7 +171,7 @@ const ConsortiumSimulator = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
   const result: SimulationResult = useMemo(() => {
-    const parcelas = calculateParcelas(input.creditoContratado, input.prazoInicial, input.tipoPessoa, input.redutorGrupo, input.campanhaParcelaOriginal);
+    const parcelas = calculateParcelas(input.creditoContratado, input.prazoInicial, input.tipoPessoa, input.redutorGrupo);
     const posContemplacao = calculatePostContemplation(input.creditoContratado, input.prazoInicial, input.lanceProprio, input.lanceEmbutido, input.mesContemplacao, parcelas);
     const categoria = input.creditoContratado * (1 + CONSORTIUM_RATES.taxaAdministrativa + CONSORTIUM_RATES.fundoReserva);
     return { parcelas, posContemplacao, categoria };
@@ -262,13 +251,7 @@ const ConsortiumSimulator = () => {
                     <div className="flex justify-between text-xs text-feijo-gray"><span>0%</span><span>50%</span></div>
                   </div>
 
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-sm text-feijo-gray flex items-center gap-2"><Percent className="w-4 h-4" />Campanha Parcela Original</Label>
-                      <Switch checked={input.campanhaParcelaOriginal} onCheckedChange={(v) => updateField('campanhaParcelaOriginal', v)} />
-                    </div>
-                    <div className="text-xs text-feijo-gray">Quando ativo, parcela calculada por campanha (categoria ÷ 200). Para PF, soma seguro.</div>
-                  </div>
+                  
 
                   <div className="border-t pt-6">
                     <div className="flex items-center gap-2 pb-4">
