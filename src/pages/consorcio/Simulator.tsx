@@ -151,7 +151,7 @@ function calculatePostContemplation(
 const ConsortiumSimulator = () => {
   const DEFAULTS: SimulationInput = {
     creditoContratado: 10000,
-    prazoInicial: 90,
+    prazoInicial: 80,
     lanceProprio: 0,
     lanceEmbutido: 0,
     mesContemplacao: 10,
@@ -262,8 +262,8 @@ const ConsortiumSimulator = () => {
                       <Label className="text-sm text-feijo-gray flex items-center gap-2"><Calendar className="w-4 h-4" />Prazo Inicial</Label>
                       <span className="text-sm font-medium text-feijo-red">{input.prazoInicial} meses</span>
                     </div>
-                    <Slider value={[input.prazoInicial]} onValueChange={([v]) => updateField('prazoInicial', v)} min={24} max={120} step={1} />
-                    <div className="flex justify-between text-xs text-feijo-gray"><span>24 meses</span><span>120 meses</span></div>
+                    <Slider value={[input.prazoInicial]} onValueChange={([v]) => updateField('prazoInicial', v)} min={24} max={80} step={1} />
+                    <div className="flex justify-between text-xs text-feijo-gray"><span>24 meses</span><span>80 meses</span></div>
                   </div>
 
                   <div className="space-y-3">
@@ -388,6 +388,11 @@ const ConsortiumSimulator = () => {
 
             <div className="mt-12 p-4 rounded-xl bg-gray-50 border">
               <div className="flex gap-3"><Info className="w-5 h-5 text-feijo-gray" /><p className="text-sm text-feijo-gray"><strong className="text-feijo-darkgray">Aviso:</strong> Os valores da simulação são referência e podem variar conforme disponibilidade de vagas no grupo.</p></div>
+            </div>
+
+            <div className="mt-6 p-5 rounded-xl bg-primary/5 border border-primary/30 text-center">
+              <p className="text-base md:text-lg font-semibold text-feijo-darkgray">Quer saber qual o percentual de lance atualmente nos grupos?</p>
+              <p className="text-base md:text-lg font-semibold text-feijo-darkgray">Está com dúvida no simulador?</p>
             </div>
 
             <div className="w-full flex justify-center mt-8">
