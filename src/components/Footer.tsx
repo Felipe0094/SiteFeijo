@@ -1,8 +1,38 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const Footer = () => {
+  const [views, setViews] = useState<number | null>(null);
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const svc: any = supabase;
+        const { data } = await svc
+          .from('page_views')
+          .select('count')
+          .eq('id', 'site')
+          .single();
+        const current = data?.count ?? 0;
+        const { data: updated } = await svc
+          .from('page_views')
+          .upsert(
+            { id: 'site', count: current + 1, updated_at: new Date().toISOString() },
+            { onConflict: 'id' }
+          )
+          .select('count')
+          .single();
+        if (active) setViews(updated?.count ?? current + 1);
+      } catch {
+        if (active) setViews(null);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
   return (
     <footer className="bg-[#45484A] text-white">
       <div className="container mx-auto px-4 py-12">
@@ -68,6 +98,7 @@ const Footer = () => {
         </div>
         <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
           <p>&copy; {new Date().getFullYear()} Feijó Seguros. Todos os direitos reservados.</p>
+          <p className="text-xs text-gray-400 mt-1">Acessos: {views ?? '—'}</p>
         </div>
       </div>
     </footer>
