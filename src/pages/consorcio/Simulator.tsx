@@ -171,6 +171,11 @@ const ConsortiumSimulator = () => {
   const trackContactClick = async () => {
     try {
       const svc: any = supabase;
+      const today = new Date().toISOString().slice(0, 10);
+      const storageKey = `pc:simulator_contact_clicks:${today}`;
+      if (localStorage.getItem(storageKey)) {
+        return;
+      }
       const { data } = await svc
         .from('page_views')
         .select('count')
@@ -183,6 +188,7 @@ const ConsortiumSimulator = () => {
           { id: 'simulator_contact_clicks', count: current + 1, updated_at: new Date().toISOString() },
           { onConflict: 'id' }
         );
+      localStorage.setItem(storageKey, '1');
     } catch {}
   };
   useEffect(() => {

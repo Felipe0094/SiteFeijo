@@ -19,21 +19,28 @@ const Footer = () => {
           return;
         }
         const svc: any = supabase;
+        const today = new Date().toISOString().slice(0, 10);
+        const storageKey = `pv:${metricId}:${today}`;
         const { data } = await svc
           .from('page_views')
           .select('count')
           .eq('id', metricId)
           .single();
         const current = data?.count ?? 0;
-        const { data: updated } = await svc
-          .from('page_views')
-          .upsert(
-            { id: metricId, count: current + 1, updated_at: new Date().toISOString() },
-            { onConflict: 'id' }
-          )
-          .select('count')
-          .single();
-        if (active) setViews(updated?.count ?? current + 1);
+        if (!localStorage.getItem(storageKey)) {
+          const { data: updated } = await svc
+            .from('page_views')
+            .upsert(
+              { id: metricId, count: current + 1, updated_at: new Date().toISOString() },
+              { onConflict: 'id' }
+            )
+            .select('count')
+            .single();
+          localStorage.setItem(storageKey, '1');
+          if (active) setViews(updated?.count ?? current + 1);
+        } else {
+          if (active) setViews(current);
+        }
 
         const { data: all } = await svc
           .from('page_views')
