@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 const Footer = () => {
   const [views, setViews] = useState<number | null>(null);
+  const [counts, setCounts] = useState<{ home?: number; simulator?: number; simulator_contact_clicks?: number } | null>(null);
   useEffect(() => {
     let active = true;
     (async () => {
@@ -33,6 +34,20 @@ const Footer = () => {
           .select('count')
           .single();
         if (active) setViews(updated?.count ?? current + 1);
+
+        const { data: all } = await svc
+          .from('page_views')
+          .select('id,count')
+          .in('id', ['home', 'simulator', 'simulator_contact_clicks']);
+        if (active) {
+          const map: { [k: string]: number } = {};
+          (all || []).forEach((row: any) => { map[row.id] = row.count; });
+          setCounts({
+            home: map['home'],
+            simulator: map['simulator'],
+            simulator_contact_clicks: map['simulator_contact_clicks'],
+          });
+        }
       } catch {
         if (active) setViews(null);
       }
@@ -106,7 +121,17 @@ const Footer = () => {
         </div>
         <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
           <p>&copy; {new Date().getFullYear()} Feijó Seguros. Todos os direitos reservados.</p>
-          <p className="text-xs text-gray-400 mt-1">Acessos: {views ?? '—'}</p>
+          {(() => {
+            const base = import.meta.env.BASE_URL || '/';
+            const raw = typeof window !== 'undefined' ? window.location.pathname : '/';
+            const path = raw.startsWith(base) ? raw.slice(base.length - 1) : raw;
+            const isHome = path === '/';
+            return isHome ? (
+              <p className="text-xs text-gray-400 mt-1">principal: {counts?.home ?? '—'}, Simulador: {counts?.simulator ?? '—'}, Botão: {counts?.simulator_contact_clicks ?? '—'}</p>
+            ) : (
+              <p className="text-xs text-gray-400 mt-1">Acessos: {views ?? '—'}</p>
+            );
+          })()}
         </div>
       </div>
     </footer>
