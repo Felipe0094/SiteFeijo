@@ -9,17 +9,25 @@ const Footer = () => {
     let active = true;
     (async () => {
       try {
+        const base = import.meta.env.BASE_URL || '/';
+        const raw = window.location.pathname || '/';
+        const path = raw.startsWith(base) ? raw.slice(base.length - 1) : raw;
+        const metricId = path === '/' ? 'home' : path === '/consorcio/simulador' ? 'simulator' : null;
+        if (!metricId) {
+          if (active) setViews(null);
+          return;
+        }
         const svc: any = supabase;
         const { data } = await svc
           .from('page_views')
           .select('count')
-          .eq('id', 'site')
+          .eq('id', metricId)
           .single();
         const current = data?.count ?? 0;
         const { data: updated } = await svc
           .from('page_views')
           .upsert(
-            { id: 'site', count: current + 1, updated_at: new Date().toISOString() },
+            { id: metricId, count: current + 1, updated_at: new Date().toISOString() },
             { onConflict: 'id' }
           )
           .select('count')

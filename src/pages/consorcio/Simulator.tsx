@@ -7,6 +7,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Car, Info, Wallet, Calendar, Trophy, Clock, Percent, User, Building, TrendingDown, ArrowRight, MessageSquareMore } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const CONSORTIUM_RATES = {
   taxaAdministrativa: 0.16,
@@ -167,6 +168,23 @@ const ConsortiumSimulator = () => {
     { name: 'Renan', phone: '5522988521503' },
     { name: 'Renata', phone: '5511994150565' },
   ];
+  const trackContactClick = async () => {
+    try {
+      const svc: any = supabase;
+      const { data } = await svc
+        .from('page_views')
+        .select('count')
+        .eq('id', 'simulator_contact_clicks')
+        .single();
+      const current = data?.count ?? 0;
+      await svc
+        .from('page_views')
+        .upsert(
+          { id: 'simulator_contact_clicks', count: current + 1, updated_at: new Date().toISOString() },
+          { onConflict: 'id' }
+        );
+    } catch {}
+  };
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
@@ -369,7 +387,7 @@ const ConsortiumSimulator = () => {
             <div className="w-full flex justify-center mt-8">
               <Button
                 className="w-full sm:w-auto px-6 py-4 bg-[#cc2c32] text-white gap-2 transition duration-300 ease-in-out hover:bg-[#b02429]"
-                onClick={() => setShowConsultantModal(true)}
+                onClick={async () => { trackContactClick(); setShowConsultantModal(true); }}
               >
                 <img
                   src="/whatsapp-white.svg"
