@@ -127,9 +127,9 @@ const Footer = () => {
             const path = raw.startsWith(base) ? raw.slice(base.length - 1) : raw;
             const isHome = path === '/';
             return isHome ? (
-              <p className="text-xs text-gray-400 mt-1">principal: {counts?.home ?? '—'}, Simulador: {counts?.simulator ?? '—'}, Botão: {counts?.simulator_contact_clicks ?? '—'}</p>
+              <p className="hidden sm:block text-[10px] text-gray-400 mt-1">Principal: {counts?.home ?? '—'} · Simulador: {counts?.simulator ?? '—'} · Botão: {counts?.simulator_contact_clicks ?? '—'}</p>
             ) : (
-              <p className="text-xs text-gray-400 mt-1">Acessos: {views ?? '—'}</p>
+              <p className="text-[10px] text-gray-400 mt-1">Acessos: {views ?? '—'}</p>
             );
           })()}
         </div>
