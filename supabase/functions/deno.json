@@ -1,0 +1,15 @@
+{
+  "tasks": {
+    "serve": "deno run --allow-net --allow-env index.ts"
+  },
+  "compilerOptions": {
+    "allowJs": true,
+    "lib": ["deno.window", "deno.ns", "deno.unstable"],
+    "strict": true
+  },
+  "imports": {
+    "std/": "https://deno.land/std@0.168.0/",
+    "resend": "https://esm.sh/resend@2.0.0"
+  },
+  "nodeModulesDir": false
+}
