@@ -279,6 +279,7 @@ const ConsortiumSimulator = () => {
                     </div>
                     <Slider value={[input.redutorGrupo * 100]} onValueChange={([v]) => updateField('redutorGrupo', v / 100)} min={0} max={50} step={5} />
                     <div className="flex justify-between text-xs text-feijo-gray"><span>0%</span><span>50%</span></div>
+                    <div className="text-xs text-feijo-gray text-center">Campanha atual de 40%</div>
                   </div>
 
                   
@@ -354,7 +355,7 @@ const ConsortiumSimulator = () => {
                   <div className="space-y-3">
                     <div className="flex justify-between"><span className="text-sm text-feijo-gray">Taxa Administrativa Diluída</span><span className="text-sm font-medium">{(CONSORTIUM_RATES.taxaAdministrativa * 100).toFixed(2)}%</span></div>
                     <div className="flex justify-between"><span className="text-sm text-feijo-gray">Fundo de Reserva</span><span className="text-sm font-medium">{(CONSORTIUM_RATES.fundoReserva * 100).toFixed(2)}%</span></div>
-                    <div className="flex justify-between"><span className="text-sm text-feijo-gray">Seguro de Vida (apenas PF)</span><span className="text-sm font-medium">{(CONSORTIUM_RATES.seguroVidaPF * 100).toFixed(3)}% <span className="text-xs text-feijo-gray">(mensal)</span></span></div>
+                    <div className="flex justify-between"><span className="text-sm text-feijo-gray">Seguro de Vida (apenas PF)</span><span className="text-sm font-medium">{(CONSORTIUM_RATES.seguroVidaPF * 100).toFixed(3)}%</span></div>
                   </div>
                 </div>
               </div>
