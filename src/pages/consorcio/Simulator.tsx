@@ -194,6 +194,12 @@ const ConsortiumSimulator = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
+  // Dispara PageView no Meta ao montar a página do simulador
+  useEffect(() => {
+    try {
+      (window as any).fbq && (window as any).fbq('track', 'PageView');
+    } catch {}
+  }, []);
   const result: SimulationResult = useMemo(() => {
     const parcelas = calculateParcelas(input.creditoContratado, input.prazoInicial, input.tipoPessoa, input.redutorGrupo);
     const posContemplacao = calculatePostContemplation(input.creditoContratado, input.prazoInicial, input.lanceProprio, input.lanceEmbutido, input.mesContemplacao, parcelas);
@@ -398,7 +404,14 @@ const ConsortiumSimulator = () => {
             <div className="w-full flex justify-center mt-8">
               <Button
                 className="w-full sm:w-auto px-6 py-4 bg-[#cc2c32] text-white gap-2 transition duration-300 ease-in-out hover:bg-[#b02429]"
-                onClick={async () => { trackContactClick(); setShowConsultantModal(true); }}
+                onClick={async () => {
+                  try {
+                    // Dispara evento de Lead no Meta Pixel
+                    (window as any).fbq && (window as any).fbq('track', 'Lead');
+                  } catch {}
+                  trackContactClick();
+                  setShowConsultantModal(true);
+                }}
               >
                 <img
                   src="/whatsapp-white.svg"
