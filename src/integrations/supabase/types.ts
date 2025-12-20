@@ -788,12 +788,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+<<<<<<< HEAD
       increment_page_view: {
         Args: {
           page_id: string
         }
         Returns: void
       }
+=======
+      [_ in never]: never
+>>>>>>> 72578678e50039c27efb5861401cbd8f0435fb14
     }
     Enums: {
       garage_status: "true" | "false" | "not_applicable"
