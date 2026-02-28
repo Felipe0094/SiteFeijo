@@ -121,8 +121,14 @@
           s.parentNode.insertBefore(a, s);
         };
 
-        ttq.load('D5204GJC77U6T74NA5V0');
-        ttq.page();
+        var dnt = (navigator.doNotTrack === '1' || window.doNotTrack === '1');
+        var saveData = (navigator.connection && navigator.connection.saveData);
+        if (!dnt && !saveData && navigator.onLine) {
+          ttq.load('D5204GJC77U6T74NA5V0');
+          window.addEventListener('load', function() {
+            try { ttq.page(); } catch (e) {}
+          });
+        }
       }(window, document, 'ttq');
     </script>
     <!-- TikTok Pixel Code End -->

@@ -1,10 +1,29 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const CommercialSection = () => {
+  const [startFade, setStartFade] = useState(false);
+  const sectionRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const node = sectionRef.current;
+    if (!node) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        if (e.isIntersecting) {
+          setStartFade(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.25 }
+    );
+    obs.observe(node);
+    return () => obs.disconnect();
+  }, []);
 
   return (
     <section 
+      ref={sectionRef}
       className="py-0 relative"
       style={{ 
         backgroundColor: '#ffffff'
@@ -14,7 +33,7 @@ const CommercialSection = () => {
       <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-0 min-h-[400px]">
         {/* Texto alinhado à esquerda - ordem 1 em mobile, ordem 1 em desktop */}
         <div className="flex-1 text-left px-4 md:px-8 lg:pr-8 order-1">
-          <h2 className="text-3xl md:text-4xl font-light mb-6 mt-8">
+          <h2 className={`text-3xl md:text-4xl font-light mb-6 mt-8 ${startFade ? 'fade-up' : 'pre-fade'}`} style={{ ['--fade-delay' as any]: '0ms' }}>
             <span className="text-[#cc2c32]">Planos de Saúde</span>{' '}
             <span className="text-[#21282d]">Empresariais</span>
           </h2>
@@ -28,7 +47,7 @@ const CommercialSection = () => {
           
           <div className="mt-8 text-center">
             <Link to="/seguros/saude/cotacao">
-              <button className="bg-[#cc2c32] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#b02429] transition-colors">
+              <button className={`bg-[#cc2c32] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#b02429] transition-colors ${startFade ? 'fade-up' : 'pre-fade'}`} style={{ ['--fade-delay' as any]: '500ms' }}>
                 Solicitar Cotação
               </button>
             </Link>
@@ -37,8 +56,8 @@ const CommercialSection = () => {
         
         {/* Imagem comercial - ordem 2 em mobile (abaixo do texto), ordem 2 em desktop (à direita) */}
         <div 
-          className="flex-1 h-full relative min-h-[300px] lg:min-h-[400px] order-2 w-full"
-          style={{
+          className={`flex-1 h-full relative min-h-[300px] lg:min-h-[400px] order-2 w-full ${startFade ? 'fade-left' : 'pre-fade-left'}`}
+          style={{ ['--fade-delay' as any]: '0ms',
             backgroundImage: 'url(/comercial.png)',
             backgroundSize: 'contain',
             backgroundPosition: 'bottom',

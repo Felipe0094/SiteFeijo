@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Activity, Users, Heart, MessageSquare, FileText } from 'lucide-react';
 import Navbar from '@/components/Navbar';
@@ -15,6 +15,24 @@ const HealthInsurance = () => {
   const [quoteData, setQuoteData] = useState<HealthInsuranceFormData | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentPlanFile, setCurrentPlanFile] = useState<File | null>(null);
+  const [startFade, setStartFade] = useState(false);
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const node = sectionRef.current;
+    if (!node) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        if (e.isIntersecting) {
+          setStartFade(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.25 }
+    );
+    obs.observe(node);
+    return () => obs.disconnect();
+  }, []);
 
   const handleFileChange = (file: File | null) => {
     setCurrentPlanFile(file);
@@ -90,14 +108,14 @@ const HealthInsurance = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center px-4 md:px-8">
+    <div ref={sectionRef} className="min-h-screen bg-gray-100 flex justify-center px-4 md:px-8">
       <div className="min-h-screen flex flex-col my-4 md:my-8 bg-white rounded-xl shadow-lg overflow-hidden max-w-6xl mx-auto">
         <Navbar />
         <main className="flex-grow pt-[56px] md:pt-[64px]">
           <div className="py-8 px-4 md:px-8" id="top">
           <div className="flex items-center gap-4 mb-8">
             <Activity className="text-feijo-red" size={48} />
-            <h1 className="text-3xl font-bold text-feijo-darkgray">Plano de Saúde</h1>
+            <h1 className={`text-3xl font-bold text-feijo-darkgray ${startFade ? 'fade-up' : 'pre-fade'}`} style={{ ['--fade-delay' as any]: '0ms' }}>Plano de Saúde</h1>
           </div>
           
           <div className="grid md:grid-cols-2 gap-8 mb-8">
@@ -127,7 +145,7 @@ const HealthInsurance = () => {
           </div>
 
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-6 text-feijo-darkgray text-center flex items-center justify-left gap-2">
+            <h2 className={`text-2xl font-semibold mb-6 text-feijo-darkgray text-center flex items-center justify-left gap-2 ${startFade ? 'fade-up' : 'pre-fade'}`} style={{ ['--fade-delay' as any]: '500ms' }}>
  <FileText className="text-feijo-red" size={24} />
  Formulário para Cotação</h2>
             <HealthInsuranceQuoteForm 

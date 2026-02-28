@@ -143,3 +143,80 @@
 *:not(input):not(textarea):not([contenteditable="true"]) {
   caret-color: transparent;
 }
+
+.hero-fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: heroFadeUp 5000ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--hero-delay, 500ms);
+}
+
+@keyframes heroFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(36px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-fade-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: heroFadeUp 900ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--fade-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.pre-fade {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.fade-left {
+  opacity: 0;
+  transform: translateX(36px);
+  animation: heroFadeLeft 900ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--fade-delay, 0ms);
+}
+
+@keyframes heroFadeLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(36px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-left {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.pre-fade-left {
+  opacity: 0;
+  transform: translateX(36px);
+}

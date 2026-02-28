@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import InsuranceCompanyDetails from './InsuranceCompanyDetails';
 
 interface InsuranceCompany {
@@ -12,6 +12,24 @@ interface InsuranceCompany {
 const PartnersSection = () => {
   const [selectedCompany, setSelectedCompany] = useState<InsuranceCompany | null>(null);
   const [preloadedImages, setPreloadedImages] = useState<boolean>(false);
+  const [startFade, setStartFade] = useState(false);
+  const sectionRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const node = sectionRef.current;
+    if (!node) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        if (e.isIntersecting) {
+          setStartFade(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.25 }
+    );
+    obs.observe(node);
+    return () => obs.disconnect();
+  }, []);
   
   const partners: InsuranceCompany[] = [
     { 
@@ -129,16 +147,17 @@ const PartnersSection = () => {
   };
   
   return (
-    <section id="seguradoras-parceiras" className="pt-16 pb-16 bg-[#eaeaea]">
+    <section ref={sectionRef} id="seguradoras-parceiras" className="pt-16 pb-16 bg-[#eaeaea]">
       <div className="container mx-auto px-4">
-        <h2 className="text-2xl md:text-3xl font-light mb-12 text-center text-[#cc2c32]">
+        <h2 className={`text-2xl md:text-3xl font-light mb-12 text-center text-[#cc2c32] ${startFade ? 'fade-up' : 'pre-fade'}`} style={{ ['--fade-delay' as any]: '0ms' }}>
           Principais Seguradoras Parceiras<br></br><span className="text-base md:text-xl font-light text-[#cc2c32]">Consulte aqui os Canais de Atendimento</span>
         </h2>
         <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
-          {partners.map((partner) => (
+          {partners.map((partner, index) => (
             <div 
               key={partner.name}
-              className="flex items-center justify-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer h-16"
+              className={`flex items-center justify-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer h-16 ${startFade ? 'fade-up' : 'pre-fade'}`}
+              style={{ ['--fade-delay' as any]: `${100 + index * 80}ms` }}
               onClick={() => handleCompanyClick(partner)}
             >
               <img

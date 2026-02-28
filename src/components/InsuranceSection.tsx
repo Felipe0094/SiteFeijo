@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Car, Plane, Home, Heart, Building, FileText, Building2, Activity, MessageSquareMore } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from './ui/button';
@@ -9,13 +9,16 @@ interface InsuranceCardProps {
   description: string;
   icon: React.ReactNode;
   path: string;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
-const InsuranceCard: React.FC<InsuranceCardProps> = ({ title, description, icon, path }) => {
+const InsuranceCard: React.FC<InsuranceCardProps> = ({ title, description, icon, path, className, style }) => {
   return (
     <Link to={path} className="block h-full">
       <Card
-        className="h-full relative overflow-hidden rounded-xl group transform-gpu bg-white [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)] transition-all duration-300 dark:bg-black dark:[border:1px_solid_rgba(255,255,255,.1)] dark:[box-shadow:0_-20px_80px_-20px_#ffffff1f_inset]"
+        className={`h-full relative overflow-hidden rounded-xl group transform-gpu bg-white [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)] transition-all duration-300 dark:bg-black dark:[border:1px_solid_rgba(255,255,255,.1)] dark:[box-shadow:0_-20px_80px_-20px_#ffffff1f_inset] ${className || ''}`}
+        style={style}
       >
         <CardContent className="p-6 flex flex-col items-center h-full z-10 pointer-events-none">
           <div className="text-[#cc2c32] mb-4">
@@ -48,6 +51,46 @@ const consultants = [
 
 const InsuranceSection = () => {
   const [showModal, setShowModal] = useState(false);
+  const [startFade, setStartFade] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
+  const sectionRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    let fallbackTimer: number | undefined;
+    const onScroll = () => {
+      if (!hasScrolled && window.scrollY > 8) {
+        setHasScrolled(true);
+        if (fallbackTimer !== undefined) clearTimeout(fallbackTimer);
+        window.removeEventListener("scroll", onScroll);
+      }
+    };
+    if (!hasScrolled) {
+      window.addEventListener("scroll", onScroll, { passive: true });
+      fallbackTimer = window.setTimeout(() => {
+        setStartFade(true);
+        if (fallbackTimer !== undefined) clearTimeout(fallbackTimer);
+        window.removeEventListener("scroll", onScroll);
+      }, 3000);
+    }
+    const node = sectionRef.current;
+    if (!node) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        if (e.isIntersecting && (hasScrolled || e.intersectionRatio >= 0.7)) {
+          setStartFade(true);
+          if (fallbackTimer !== undefined) clearTimeout(fallbackTimer);
+          obs.disconnect();
+        }
+      },
+      { threshold: [0.25, 0.5, 0.7, 0.9] }
+    );
+    obs.observe(node);
+    return () => {
+      obs.disconnect();
+      if (!hasScrolled) window.removeEventListener("scroll", onScroll);
+      if (fallbackTimer !== undefined) clearTimeout(fallbackTimer);
+    };
+  }, [hasScrolled]);
   const insuranceTypes = [
     {
       title: "Seguro de Automóveis",
@@ -100,9 +143,9 @@ const InsuranceSection = () => {
   ];
 
   return (
-    <section id="services" className="py-16 bg-white">
+    <section ref={sectionRef} id="services" className="py-16 bg-white">
       <div className="container mx-auto px-4">
-        <h2 className="text-2xl md:text-3xl font-light mb-12 text-center text-[#21282d]">Faça sua cotação aqui!</h2>
+        <h2 className={`text-2xl md:text-3xl font-light mb-12 text-center text-[#21282d] ${startFade ? "fade-up" : "pre-fade"}`} style={{ ["--fade-delay" as any]: "0ms" }}>Faça sua cotação aqui!</h2>
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {insuranceTypes.map((insurance, index) => (
             <InsuranceCard
@@ -111,12 +154,15 @@ const InsuranceSection = () => {
               description={insurance.description}
               icon={insurance.icon}
               path={insurance.path}
+              {...{ style: { ["--fade-delay" as any]: `${100 + index * 120}ms` } }}
+              {...{ className: `${startFade ? "fade-up" : "pre-fade"}` }}
             />
           ))}
         </div>
         <div className="w-full flex justify-center mt-8">
           <Button
-            className="w-full sm:w-auto px-6 py-4 bg-[#cc2c32] text-white gap-2 transition duration-300 ease-in-out hover:bg-[#b02429]"
+            className={`${startFade ? "fade-up" : "pre-fade"} w-full sm:w-auto px-6 py-4 bg-[#cc2c32] text-white gap-2 transition duration-300 ease-in-out hover:bg-[#b02429]`}
+            style={{ ["--fade-delay" as any]: "500ms" }}
             onClick={() => setShowModal(true)}
           >
             <img
