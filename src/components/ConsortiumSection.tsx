@@ -45,7 +45,7 @@ const ConsortiumSection = () => {
               className={`bg-[#cc2c32] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#b02429] transition-colors ${startFade ? 'fade-up' : 'pre-fade'}`}
               style={{ ['--fade-delay' as any]: '500ms' }}
             >
-              Simule agora o seu Consórcio de Automóveis
+              Simule agora o seu Consórcio Porto Seguro
             </button>
           </Link>
         </div>
