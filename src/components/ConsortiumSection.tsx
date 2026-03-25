@@ -56,15 +56,15 @@ const ConsortiumSection = () => {
             className={`text-3xl md:text-4xl font-light mb-6 mt-8 ${startFade ? 'fade-up' : 'pre-fade'}`}
             style={{ ['--fade-delay' as any]: '0ms' }}
           >
-            <span className="text-[#cc2c32]">Consórcio de Automóveis</span>{' '}
+            <span className="text-[#cc2c32]">Consórcio</span>{' '}
             <span className="text-[#21282d]">Porto Seguro</span>
           </h2>
           <div className="space-y-4 text-[#21282d] text-lg font-light leading-relaxed text-justify">
             <p>
-              Cansado do financiamento? Seu carro novo sem Juros e sem Entrada!
+              Cansado do financiamento? Seu "sonho" sem Juros e sem Entrada!
             </p>
             <p>
-              O Consórcio de Automóveis Porto Seguro é a forma mais inteligente de ter o seu veículo (novo ou usado) com a segurança de quem entende de carro.
+              O Consórcio Porto Seguro é a forma mais inteligente de conquistar o seu bem (novo ou usado), seja uma casa, apartamento ou veículo. Conte com a segurança e a tradição de quem você confia para realizar seus projetos.
             </p>
             <p>
               Simule 100% Online e veja como as parcelas são leves e cabem no seu planejamento.
